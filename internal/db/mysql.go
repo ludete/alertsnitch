@@ -51,8 +51,9 @@ func connectMySQL(args ConnectionArgs) (*MySQLDB, error) {
 func (d MySQLDB) Save(data *internal.AlertGroup) error {
 	return d.unitOfWork(func(tx *sql.Tx) error {
 		r, err := tx.Exec(`
-			INSERT INTO AlertGroup (time, receiver, status, externalURL, groupKey)
-			VALUES (now(), ?, ?, ?, ?)`, data.Receiver, data.Status, data.ExternalURL, data.GroupKey)
+			INSERT INTO AlertGroup (time, receiver, status, externalURL, groupKey, orgId, Title, Message)
+			VALUES (now(), ?, ?, ?, ?, ?, ?, ?)`, data.Receiver, data.Status, data.ExternalURL, data.GroupKey,
+			data.OrgId, data.Title, data.Message)
 		if err != nil {
 			return fmt.Errorf("failed to insert into AlertGroups: %s", err)
 		}
@@ -91,14 +92,18 @@ func (d MySQLDB) Save(data *internal.AlertGroup) error {
 			var result sql.Result
 			if alert.EndsAt.Before(alert.StartsAt) {
 				result, err = tx.Exec(`
-				INSERT INTO Alert (alertGroupID, status, startsAt, generatorURL, fingerprint)
-				VALUES (?, ?, ?, ?, ?)`,
-					alertGroupID, alert.Status, alert.StartsAt, alert.GeneratorURL, alert.Fingerprint)
+				INSERT INTO Alert (alertGroupID, status, startsAt, generatorURL, fingerprint,
+				                   dashboardURLrl, panelURLrl, valueString, silenceURLrl)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+					alertGroupID, alert.Status, alert.StartsAt, alert.GeneratorURL, alert.Fingerprint,
+					alert.DashboardURL, alert.PanelURL, alert.ValueString, alert.SilenceURL)
 			} else {
 				result, err = tx.Exec(`
-				INSERT INTO Alert (alertGroupID, status, startsAt, endsAt, generatorURL, fingerprint)
-				VALUES (?, ?, ?, ?, ?, ?)`,
-					alertGroupID, alert.Status, alert.StartsAt, alert.EndsAt, alert.GeneratorURL, alert.Fingerprint)
+				INSERT INTO Alert (alertGroupID, status, startsAt, endsAt, generatorURL, fingerprint, 
+				                   dashboardURLrl, panelURLrl, valueString, silenceURLrl)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+					alertGroupID, alert.Status, alert.StartsAt, alert.EndsAt, alert.GeneratorURL, alert.Fingerprint,
+					alert.DashboardURL, alert.PanelURL, alert.ValueString, alert.SilenceURL)
 			}
 			if err != nil {
 				return fmt.Errorf("failed to insert into Alert: %s", err)

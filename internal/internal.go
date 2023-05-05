@@ -28,6 +28,12 @@ type AlertGroup struct {
 	CommonAnnotations map[string]string `json:"commonAnnotations"`
 
 	ExternalURL string `json:"externalURL"`
+
+	// only for grafana alert
+	OrgId           int64  `json:"orgId"`
+	Title           string `json:"title"`
+	Message         string `json:"message"`
+	TruncatedAlerts int64  `json:"truncatedAlerts"`
 }
 
 // Alerts is a slice of Alert
@@ -42,4 +48,10 @@ type Alert struct {
 	EndsAt       time.Time         `json:"endsAt"`
 	GeneratorURL string            `json:"generatorURL"`
 	Fingerprint  string            `json:"fingerprint"`
+
+	// grafana only add
+	SilenceURL   string `json:"silenceURLrl"`
+	DashboardURL string `json:"dashboardURLrl"`
+	PanelURL     string `json:"panelURLrl"`
+	ValueString  string `json:"valueString"`
 }

@@ -51,7 +51,7 @@ func connectMySQL(args ConnectionArgs) (*MySQLDB, error) {
 func (d MySQLDB) Save(data *internal.AlertGroup) error {
 	return d.unitOfWork(func(tx *sql.Tx) error {
 		r, err := tx.Exec(`
-			INSERT INTO AlertGroup (time, receiver, status, externalURL, groupKey, orgId, Title, Message)
+			INSERT INTO AlertGroup (time, receiver, status, externalURL, groupKey, orgId, title, message)
 			VALUES (now(), ?, ?, ?, ?, ?, ?, ?)`, data.Receiver, data.Status, data.ExternalURL, data.GroupKey,
 			data.OrgId, data.Title, data.Message)
 		if err != nil {

@@ -35,6 +35,9 @@ CREATE TABLE `AlertGroup` (
 	`status` VARCHAR(50) NOT NULL,
 	`externalURL` TEXT NOT NULL,
 	`groupKey` VARCHAR(255) NOT NULL,
+    `orgId` INT NOT NULL,
+    `title` VARCHAR(100) NOT NULL,
+    `message` VARCHAR(1000) NOT NULL,
 	KEY `idx_time` (`time`) USING BTREE,
     KEY `idx_status_ts` (`status`, `time`) USING BTREE,
 	PRIMARY KEY (`ID`)
@@ -74,6 +77,10 @@ CREATE TABLE `Alert` (
     `startsAt` DATETIME NOT NULL,
     `endsAt` DATETIME DEFAULT NULL,
 	`generatorURL` TEXT NOT NULL,
+    `dashboardURLrl` TEXT NOT NULL,
+    `panelURLrl` TEXT NOT NULL,
+    `silenceURLrl` TEXT NOT NULL,
+    `valueString` TEXT NOT NULL,
     FOREIGN KEY (alertGroupID) REFERENCES AlertGroup (ID) ON DELETE CASCADE,
 	PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -9,7 +9,7 @@ mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --host=127.0.0.1 -e "CREAT
 echo "Creating bootstrapped model"
 mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --host=127.0.0.1 "${MYSQL_DATABASE}" < ../db.d/mysql/0.0.1-bootstrap.sql
 
-echo "Applying fingerprint model update"
-mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --host=127.0.0.1 "${MYSQL_DATABASE}" < ../db.d/mysql/0.1.0-fingerprint.sql
+#echo "Applying fingerprint model update"
+#mysql --user=root --password="${MYSQL_ROOT_PASSWORD}" --host=127.0.0.1 "${MYSQL_DATABASE}" < ../db.d/mysql/0.1.0-fingerprint.sql
 
 echo "Done creating model"

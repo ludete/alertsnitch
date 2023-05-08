@@ -93,15 +93,15 @@ func (d MySQLDB) Save(data *internal.AlertGroup) error {
 			if alert.EndsAt.Before(alert.StartsAt) {
 				result, err = tx.Exec(`
 				INSERT INTO Alert (alertGroupID, status, startsAt, generatorURL, fingerprint,
-				                   dashboardURLrl, panelURLrl, valueString, silenceURLrl)
+				                   dashboardURL, panelURL, valueString, silenceURL)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 					alertGroupID, alert.Status, alert.StartsAt, alert.GeneratorURL, alert.Fingerprint,
 					alert.DashboardURL, alert.PanelURL, alert.ValueString, alert.SilenceURL)
 			} else {
 				result, err = tx.Exec(`
 				INSERT INTO Alert (alertGroupID, status, startsAt, endsAt, generatorURL, fingerprint, 
-				                   dashboardURLrl, panelURLrl, valueString, silenceURLrl)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+				                   dashboardURL, panelURL, valueString, silenceURL)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 					alertGroupID, alert.Status, alert.StartsAt, alert.EndsAt, alert.GeneratorURL, alert.Fingerprint,
 					alert.DashboardURL, alert.PanelURL, alert.ValueString, alert.SilenceURL)
 			}

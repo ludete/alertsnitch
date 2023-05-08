@@ -77,10 +77,11 @@ CREATE TABLE `Alert` (
     `startsAt` DATETIME NOT NULL,
     `endsAt` DATETIME DEFAULT NULL,
 	`generatorURL` VARCHAR(300) NOT NULL,
-    `dashboardURLrl` VARCHAR(300) NOT NULL,
-    `panelURLrl` VARCHAR(300) NOT NULL,
-    `silenceURLrl` VARCHAR(300) NOT NULL,
-    `valueString` VARCHAR(3000) NOT NULL,
+    `dashboardURL` VARCHAR(300),
+    `panelURL` VARCHAR(300),
+    `silenceURL` VARCHAR(300),
+    `valueString` VARCHAR(3000),
+    `fingerprint` TEXT NOT NULL,
     FOREIGN KEY (alertGroupID) REFERENCES AlertGroup (ID) ON DELETE CASCADE,
 	PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -102,3 +103,5 @@ CREATE TABLE `AlertAnnotation` (
     FOREIGN KEY (AlertID) REFERENCES Alert (ID) ON DELETE CASCADE,
 	PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+UPDATE `Model`  SET `version`="0.1.0";

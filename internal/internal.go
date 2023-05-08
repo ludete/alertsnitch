@@ -50,8 +50,8 @@ type Alert struct {
 	Fingerprint  string            `json:"fingerprint"`
 
 	// grafana only add
-	SilenceURL   string `json:"silenceURLrl"`
-	DashboardURL string `json:"dashboardURLrl"`
-	PanelURL     string `json:"panelURLrl"`
+	SilenceURL   string `json:"silenceURL"`
+	DashboardURL string `json:"dashboardURL"`
+	PanelURL     string `json:"panelURL"`
 	ValueString  string `json:"valueString"`
 }

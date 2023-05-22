@@ -51,9 +51,9 @@ func connectMySQL(args ConnectionArgs) (*MySQLDB, error) {
 func (d MySQLDB) Save(data *internal.AlertGroup) error {
 	return d.unitOfWork(func(tx *sql.Tx) error {
 		r, err := tx.Exec(`
-			INSERT INTO AlertGroup (time, receiver, status, externalURL, groupKey, orgId, title, message)
-			VALUES (now(), ?, ?, ?, ?, ?, ?, ?)`, data.Receiver, data.Status, data.ExternalURL, data.GroupKey,
-			data.OrgId, data.Title, data.Message)
+			INSERT INTO AlertGroup (time, receiver, status, externalURL, groupKey, orgId, title)
+			VALUES (now(), ?, ?, ?, ?, ?, ?)`, data.Receiver, data.Status, data.ExternalURL,
+			data.GroupKey, data.OrgId, data.Title)
 		if err != nil {
 			return fmt.Errorf("failed to insert into AlertGroups: %s", err)
 		}
@@ -63,47 +63,22 @@ func (d MySQLDB) Save(data *internal.AlertGroup) error {
 			return fmt.Errorf("failed to get AlertGroups inserted id: %s", err)
 		}
 
-		for k, v := range data.GroupLabels {
-			_, err := tx.Exec(`
-				INSERT INTO GroupLabel (alertGroupID, GroupLabel, Value)
-				VALUES (?, ?, ?)`, alertGroupID, k, v)
-			if err != nil {
-				return fmt.Errorf("failed to insert into GroupLabel: %s", err)
-			}
-		}
-		for k, v := range data.CommonLabels {
-			_, err := tx.Exec(`
-				INSERT INTO CommonLabel (alertGroupID, Label, Value)
-				VALUES (?, ?, ?)`, alertGroupID, k, v)
-			if err != nil {
-				return fmt.Errorf("failed to insert into CommonLabel: %s", err)
-			}
-		}
-		for k, v := range data.CommonAnnotations {
-			_, err := tx.Exec(`
-				INSERT INTO CommonAnnotation (alertGroupID, Annotation, Value)
-				VALUES (?, ?, ?)`, alertGroupID, k, v)
-			if err != nil {
-				return fmt.Errorf("failed to insert into CommonAnnotation: %s", err)
-			}
-		}
-
 		for _, alert := range data.Alerts {
 			var result sql.Result
 			if alert.EndsAt.Before(alert.StartsAt) {
 				result, err = tx.Exec(`
-				INSERT INTO Alert (alertGroupID, status, startsAt, generatorURL, fingerprint,
-				                   dashboardURL, panelURL, valueString, silenceURL)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-					alertGroupID, alert.Status, alert.StartsAt, alert.GeneratorURL, alert.Fingerprint,
-					alert.DashboardURL, alert.PanelURL, alert.ValueString, alert.SilenceURL)
+				INSERT INTO Alert (alertGroupID, status, startsAt, generatorURL,
+				                panelURL, valueString)
+				VALUES (?, ?, ?, ?, ?, ?)`,
+					alertGroupID, alert.Status, alert.StartsAt, alert.GeneratorURL,
+					alert.PanelURL, alert.ValueString)
 			} else {
 				result, err = tx.Exec(`
-				INSERT INTO Alert (alertGroupID, status, startsAt, endsAt, generatorURL, fingerprint, 
-				                   dashboardURL, panelURL, valueString, silenceURL)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-					alertGroupID, alert.Status, alert.StartsAt, alert.EndsAt, alert.GeneratorURL, alert.Fingerprint,
-					alert.DashboardURL, alert.PanelURL, alert.ValueString, alert.SilenceURL)
+				INSERT INTO Alert (alertGroupID, status, startsAt, endsAt, generatorURL, 
+				                   panelURL, valueString)
+				VALUES (?, ?, ?, ?, ?, ?, ?)`,
+					alertGroupID, alert.Status, alert.StartsAt, alert.EndsAt, alert.GeneratorURL,
+					alert.PanelURL, alert.ValueString)
 			}
 			if err != nil {
 				return fmt.Errorf("failed to insert into Alert: %s", err)
